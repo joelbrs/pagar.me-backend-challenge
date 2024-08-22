@@ -42,6 +42,10 @@ export class PgTransactionRepository
         returning *;
     `;
 
+    await PgHelper.client?.query("BEGIN;");
+    await PgHelper.client?.query(
+      "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;"
+    );
     const result = await PgHelper.client?.query(query, [
       value,
       description,
@@ -52,6 +56,8 @@ export class PgTransactionRepository
       cardCvv,
       clientId,
     ]);
+    await PgHelper.client?.query("COMMIT;");
+
     return result?.rows[0] as CreateTransactionRepository.Response;
   }
 }
