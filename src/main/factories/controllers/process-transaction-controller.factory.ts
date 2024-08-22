@@ -1,15 +1,10 @@
 import { ProcessTransactionController } from "@/presentation/controllers";
-import { Controller, Validator } from "@/presentation/protocols";
+import { Controller } from "@/presentation/protocols";
 import { makeCreateTransaction } from "../use-cases";
+import { makeProcessTransactionValidations } from "./validations/process-transaction-validations.factory";
 
 export const makeProcessTransactionController = (): Controller => {
-  class ValidatorStub implements Validator {
-    validate(_: any) {
-      return new Error();
-    }
-  }
-
-  const validator = new ValidatorStub();
+  const validator = makeProcessTransactionValidations();
   const createTransaction = makeCreateTransaction();
 
   return new ProcessTransactionController(validator, createTransaction);
