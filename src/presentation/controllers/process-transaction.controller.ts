@@ -17,10 +17,9 @@ export class ProcessTransactionController implements Controller {
       return badRequest(error);
     }
 
-    const { value, paymentMethod } =
-      httpRequest.body as ProcessTransaction.Request;
+    // const { paymentMethod } = httpRequest.body as ProcessTransaction.Request;
 
-    await this.createPayables.create({ value, paymentMethod });
+    // await this.createPayables.create({ paymentMethod });
     return ok(httpRequest.body);
   }
 }

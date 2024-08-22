@@ -4,6 +4,7 @@ export interface Controller {
 
 export interface HttpRequest {
   body?: any;
+  params?: any;
 }
 
 export interface HttpResponse {
