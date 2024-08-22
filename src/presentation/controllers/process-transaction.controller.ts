@@ -1,10 +1,18 @@
 import { PaymentMethod } from "@/domain/models";
-import { ok } from "../helpers";
-import { Controller, HttpRequest, HttpResponse } from "../protocols";
+import { badRequest, ok } from "../helpers";
+import { Controller, HttpRequest, HttpResponse, Validator } from "../protocols";
 import { PaymentCard } from "@/domain/value-objects";
 
 export class ProcessTransaction implements Controller {
+  constructor(private readonly validator: Validator) {}
+
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const error = this.validator.validate(httpRequest.body);
+
+    if (error) {
+      return badRequest(error);
+    }
+
     return ok(httpRequest.body);
   }
 }
