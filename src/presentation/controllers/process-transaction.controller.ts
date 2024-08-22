@@ -1,5 +1,5 @@
 import { PaymentMethod } from "@/domain/models";
-import { badRequest, ok, serverError } from "../helpers";
+import { badRequest, created, ok, serverError } from "../helpers";
 import { Controller, HttpRequest, HttpResponse, Validator } from "../protocols";
 import { PaymentCard } from "@/domain/value-objects";
 import { CreateTransaction } from "@/domain/use-cases";
@@ -19,7 +19,7 @@ export class ProcessTransactionController implements Controller {
       }
 
       const response = await this.createTransaction.create(httpRequest.body);
-      return ok(response);
+      return created(response);
     } catch {
       return serverError();
     }
