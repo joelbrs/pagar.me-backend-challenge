@@ -1,8 +1,12 @@
-import { GetTransactionsRepository } from "@/data/protocols/database";
-import { GetTransactions } from "@/domain/use-cases";
+import {
+  CreateTransactionRepository,
+  GetTransactionsRepository,
+} from "@/data/protocols/database";
 import { PgHelper } from "./helpers";
 
-export class PgClientRepository implements GetTransactionsRepository {
+export class PgTransactionRepository
+  implements GetTransactionsRepository, CreateTransactionRepository
+{
   async getTransactions({ clientId }: GetTransactionsRepository.Request) {
     const query = `--sql
         select 
@@ -18,5 +22,36 @@ export class PgClientRepository implements GetTransactionsRepository {
 
     const result = await PgHelper.client?.query(query, [clientId]);
     return result?.rows[0] as GetTransactionsRepository.Response;
+  }
+
+  async createTransaction({
+    cardCarrierName,
+    cardCvv,
+    cardExpitarionDate,
+    cardNumber,
+    clientId,
+    description,
+    paymentMethod,
+    value,
+  }: CreateTransactionRepository.Request) {
+    const query = `--sql
+        insert into transactions 
+            (amount, description, payment_method, card_number, card_holder_name, card_expiration_date, card_cvv, clientId)
+        values 
+            ($1, $2, $3, $4, $5, $6, $7, $8),
+        returning *;
+    `;
+
+    const result = await PgHelper.client?.query(query, [
+      value,
+      description,
+      paymentMethod,
+      cardNumber,
+      cardCarrierName,
+      cardExpitarionDate,
+      cardCvv,
+      clientId,
+    ]);
+    return result?.rows[0] as CreateTransactionRepository.Response;
   }
 }

@@ -6,8 +6,8 @@ export interface GetTransactions {
 
 export namespace GetTransactions {
   export type Request = {
-    clientId: string;
+    clientId: number;
   };
 
-  export type Response = Transaction;
+  export type Response = Transaction[];
 }

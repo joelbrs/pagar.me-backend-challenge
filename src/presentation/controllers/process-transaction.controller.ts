@@ -24,10 +24,11 @@ export class ProcessTransactionController implements Controller {
   }
 }
 
-export namespace ProcessTransaction {
+export namespace ProcessTransactionController {
   export type Request = {
+    clientId: number;
     value: number;
-    description: number;
+    description: string;
     paymentMethod: PaymentMethod;
     cardInformations: PaymentCard;
   };
