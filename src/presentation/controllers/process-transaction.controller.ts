@@ -3,7 +3,7 @@ import { badRequest, ok } from "../helpers";
 import { Controller, HttpRequest, HttpResponse, Validator } from "../protocols";
 import { PaymentCard } from "@/domain/value-objects";
 
-export class ProcessTransaction implements Controller {
+export class ProcessTransactionController implements Controller {
   constructor(private readonly validator: Validator) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
