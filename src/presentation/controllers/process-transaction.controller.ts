@@ -7,7 +7,7 @@ import { CreatePayables } from "@/domain/use-cases";
 export class ProcessTransactionController implements Controller {
   constructor(
     private readonly validator: Validator,
-    private createPayables: CreatePayables
+    private readonly createPayables: CreatePayables
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
