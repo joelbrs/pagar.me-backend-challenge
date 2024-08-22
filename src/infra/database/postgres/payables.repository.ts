@@ -25,6 +25,7 @@ export class PgPayablesRepository implements CreatePayablesRepository {
 
       return result?.rows[0] as CreatePayablesRepository.Response;
     } catch (error) {
+      console.error(error as Error);
       throw new DatabaseException((error as Error).message);
     }
   }

@@ -25,6 +25,7 @@ export class PgTransactionRepository
       const result = await PgHelper.client?.query(query, [clientId]);
       return result?.rows[0] as GetTransactionsRepository.Response;
     } catch (error) {
+      console.error(error as Error);
       throw new DatabaseException((error as Error).message);
     }
   }
@@ -66,6 +67,7 @@ export class PgTransactionRepository
 
       return result?.rows[0] as CreateTransactionRepository.Response;
     } catch (error) {
+      console.error(error as Error);
       throw new DatabaseException((error as Error).message);
     }
   }

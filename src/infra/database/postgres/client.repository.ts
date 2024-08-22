@@ -26,6 +26,7 @@ export class PgClientRepository implements GetBalanceRepository {
       const result = await PgHelper.client?.query(query, [clientId]);
       return result?.rows[0] as GetBalanceRepository.Response;
     } catch (error) {
+      console.error(error as Error);
       throw new DatabaseException((error as Error).message);
     }
   }
