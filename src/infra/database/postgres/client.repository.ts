@@ -19,7 +19,7 @@ export class PgClientRepository implements GetBalanceRepository {
             clients c on c.id = t.clientid 
         where 
             p.clientid = $1
-        `;
+    `;
 
     const result = await PgHelper.client?.query(query, [clientId]);
     return result?.rows[0] as GetBalanceRepository.Response;

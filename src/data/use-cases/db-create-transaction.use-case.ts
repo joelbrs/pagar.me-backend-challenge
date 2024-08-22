@@ -1,10 +1,15 @@
-import { CreateTransaction, GetTransactions } from "@/domain/use-cases";
+import {
+  CreatePayables,
+  CreateTransaction,
+  GetTransactions,
+} from "@/domain/use-cases";
 import { CreateTransactionRepository } from "../protocols/database";
 
 export class DbCreateTransaction implements CreateTransaction {
   constructor(
     private readonly createTransactionRepository: CreateTransactionRepository,
-    private readonly getTransactionsUseCase: GetTransactions
+    private readonly getTransactionsUseCase: GetTransactions,
+    private readonly createPayablesUseCase: CreatePayables
   ) {}
 
   async create({
@@ -14,17 +19,23 @@ export class DbCreateTransaction implements CreateTransaction {
     paymentMethod,
     value,
   }: CreateTransaction.Request) {
-    await this.createTransactionRepository.createTransaction({
-      value,
-      description,
-      paymentMethod,
-      clientId,
-      cardCarrierName: cardInformations.carrierName,
-      cardCvv: cardInformations.cvv,
-      cardExpitarionDate: cardInformations.expirationDate,
-      cardNumber: cardInformations.cardNumber,
-    });
+    const { id: transactionId } =
+      await this.createTransactionRepository.createTransaction({
+        value,
+        description,
+        paymentMethod,
+        clientId,
+        cardCarrierName: cardInformations.carrierName,
+        cardCvv: cardInformations.cvv,
+        cardExpitarionDate: cardInformations.expirationDate,
+        cardNumber: cardInformations.cardNumber,
+      });
 
+    await this.createPayablesUseCase.create({
+      clientId,
+      paymentMethod,
+      transactionId,
+    });
     return await this.getTransactionsUseCase.get({ clientId });
   }
 }

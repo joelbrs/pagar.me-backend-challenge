@@ -2,12 +2,12 @@ import { PaymentMethod } from "@/domain/models";
 import { badRequest, ok } from "../helpers";
 import { Controller, HttpRequest, HttpResponse, Validator } from "../protocols";
 import { PaymentCard } from "@/domain/value-objects";
-import { CreatePayables } from "@/domain/use-cases";
+import { CreateTransaction } from "@/domain/use-cases";
 
 export class ProcessTransactionController implements Controller {
   constructor(
     private readonly validator: Validator,
-    private readonly createPayables: CreatePayables
+    private readonly createTransaction: CreateTransaction
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -17,10 +17,8 @@ export class ProcessTransactionController implements Controller {
       return badRequest(error);
     }
 
-    // const { paymentMethod } = httpRequest.body as ProcessTransaction.Request;
-
-    // await this.createPayables.create({ paymentMethod });
-    return ok(httpRequest.body);
+    const response = await this.createTransaction.create(httpRequest.body);
+    return ok(response);
   }
 }
 

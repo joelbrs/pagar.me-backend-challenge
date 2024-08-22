@@ -1,7 +1,7 @@
 import { HttpResponse } from "../protocols";
 
 export const ok = (data: any): HttpResponse => ({
-  statusCode: 200,
+  statusCode: 201,
   body: data,
 });
 
