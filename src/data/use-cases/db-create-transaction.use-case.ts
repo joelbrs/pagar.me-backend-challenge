@@ -4,6 +4,7 @@ import {
   GetTransactions,
 } from "@/domain/use-cases";
 import { CreateTransactionRepository } from "../protocols/database";
+import { ServerErrorException } from "@/presentation/exceptions";
 
 export class DbCreateTransaction implements CreateTransaction {
   constructor(
@@ -19,23 +20,27 @@ export class DbCreateTransaction implements CreateTransaction {
     paymentMethod,
     value,
   }: CreateTransaction.Request) {
-    const { id: transactionId } =
-      await this.createTransactionRepository.createTransaction({
-        value,
-        description,
-        paymentMethod,
-        clientId,
-        cardCarrierName: cardInformations.carrierName,
-        cardCvv: cardInformations.cvv,
-        cardExpitarionDate: cardInformations.expirationDate,
-        cardNumber: cardInformations.cardNumber,
-      });
+    try {
+      const { id: transactionId } =
+        await this.createTransactionRepository.createTransaction({
+          value,
+          description,
+          paymentMethod,
+          clientId,
+          cardCarrierName: cardInformations.carrierName,
+          cardCvv: cardInformations.cvv,
+          cardExpitarionDate: cardInformations.expirationDate,
+          cardNumber: cardInformations.cardNumber,
+        });
 
-    await this.createPayablesUseCase.create({
-      clientId,
-      paymentMethod,
-      transactionId,
-    });
-    return await this.getTransactionsUseCase.get({ clientId });
+      await this.createPayablesUseCase.create({
+        clientId,
+        paymentMethod,
+        transactionId,
+      });
+      return await this.getTransactionsUseCase.get({ clientId });
+    } catch {
+      throw new ServerErrorException();
+    }
   }
 }

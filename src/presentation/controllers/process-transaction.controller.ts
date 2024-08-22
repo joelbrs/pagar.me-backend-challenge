@@ -1,5 +1,5 @@
 import { PaymentMethod } from "@/domain/models";
-import { badRequest, ok } from "../helpers";
+import { badRequest, ok, serverError } from "../helpers";
 import { Controller, HttpRequest, HttpResponse, Validator } from "../protocols";
 import { PaymentCard } from "@/domain/value-objects";
 import { CreateTransaction } from "@/domain/use-cases";
@@ -11,14 +11,18 @@ export class ProcessTransactionController implements Controller {
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
-    const error = this.validator.validate(httpRequest.body);
+    try {
+      const error = this.validator.validate(httpRequest.body);
 
-    if (error) {
-      return badRequest(error);
+      if (error) {
+        return badRequest(error);
+      }
+
+      const response = await this.createTransaction.create(httpRequest.body);
+      return ok(response);
+    } catch {
+      return serverError();
     }
-
-    const response = await this.createTransaction.create(httpRequest.body);
-    return ok(response);
   }
 }
 

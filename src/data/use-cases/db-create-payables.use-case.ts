@@ -1,5 +1,6 @@
 import { CreatePayables } from "@/domain/use-cases";
 import { CreatePayablesRepository } from "../protocols/database";
+import { ServerErrorException } from "@/presentation/exceptions";
 
 export class DbCreatePayables implements CreatePayables {
   private readonly DEFAULT_CREDIT_FEE: number = 0.05;
@@ -14,19 +15,23 @@ export class DbCreatePayables implements CreatePayables {
     clientId,
     transactionId,
   }: CreatePayables.Request) {
-    const isCreditCard = paymentMethod === "credit_card";
+    try {
+      const isCreditCard = paymentMethod === "credit_card";
 
-    const payable = await this.createPayablesRepository.createPayables({
-      clientId,
-      transactionId,
-      status: isCreditCard ? "waiting_funds" : "paid",
-      paymentDate: this.calculatePaymentDate(!isCreditCard),
-      fee: isCreditCard ? this.DEFAULT_CREDIT_FEE : this.DEFAULT_DEBIT_FEE,
-    });
+      const payable = await this.createPayablesRepository.createPayables({
+        clientId,
+        transactionId,
+        status: isCreditCard ? "waiting_funds" : "paid",
+        paymentDate: this.calculatePaymentDate(!isCreditCard),
+        fee: isCreditCard ? this.DEFAULT_CREDIT_FEE : this.DEFAULT_DEBIT_FEE,
+      });
 
-    return {
-      payableId: payable.id,
-    };
+      return {
+        payableId: payable.id,
+      };
+    } catch {
+      throw new ServerErrorException();
+    }
   }
 
   calculatePaymentDate(isToday: boolean): Date {
