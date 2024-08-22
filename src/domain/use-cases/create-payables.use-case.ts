@@ -6,8 +6,9 @@ export interface CreatePayables {
 
 export namespace CreatePayables {
   export type Request = {
-    value: number;
     paymentMethod: PaymentMethod;
+    clientId: number;
+    transactionId: number;
   };
 
   export type Response = {

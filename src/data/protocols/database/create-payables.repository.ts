@@ -8,10 +8,11 @@ export interface CreatePayablesRepository {
 }
 
 export namespace CreatePayablesRepository {
-  export type Request = CreatePayables.Request & {
+  export type Request = Omit<CreatePayables.Request, "paymentMethod"> & {
     status: PayableStatus;
     paymentDate: Date;
     fee: number;
+    clientId: number;
   };
 
   export type Response = Payable;

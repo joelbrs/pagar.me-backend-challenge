@@ -9,12 +9,16 @@ export class DbCreatePayables implements CreatePayables {
     private readonly createPayablesRepository: CreatePayablesRepository
   ) {}
 
-  async create({ paymentMethod, value }: CreatePayables.Request) {
+  async create({
+    paymentMethod,
+    clientId,
+    transactionId,
+  }: CreatePayables.Request) {
     const isCreditCard = paymentMethod === "credit_card";
 
     const payable = await this.createPayablesRepository.createPayables({
-      paymentMethod,
-      value,
+      clientId,
+      transactionId,
       status: isCreditCard ? "waiting_funds" : "paid",
       paymentDate: this.calculatePaymentDate(!isCreditCard),
       fee: isCreditCard ? this.DEFAULT_CREDIT_FEE : this.DEFAULT_DEBIT_FEE,
