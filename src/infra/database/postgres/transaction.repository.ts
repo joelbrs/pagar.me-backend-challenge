@@ -68,6 +68,8 @@ export class PgTransactionRepository
       return result?.rows[0] as CreateTransactionRepository.Response;
     } catch (error) {
       console.error(error as Error);
+
+      await PgHelper.client?.query("ROLLBACK;");
       throw new DatabaseException((error as Error).message);
     }
   }
